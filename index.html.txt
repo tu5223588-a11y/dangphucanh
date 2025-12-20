@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website của Bạn Thân</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --bg-color: #fcfaf7;
+            --text-color: #2c3e50;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        body.dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #f1f1f1;
+            --card-bg: rgba(44, 62, 80, 0.9);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; transition: 0.3s; }
+        
+        h1 { font-family: 'Playfair Display', serif; font-size: 4rem; }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; }
+        p, span, b { font-size: 1rem; }
+
+        .books-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .floating-book {
+            position: absolute;
+            width: 70px; height: 100px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 3px 5px 15px rgba(0,0,0,0.3);
+            border-radius: 3px;
+            transform: translateY(120vh); 
+            animation: floatIn 15s linear infinite;
+        }
+        @keyframes floatIn {
+            0% { transform: translateY(120vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(-30vh) rotate(360deg); opacity: 0; }
+        }
+
+        .featured-book {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%) scale(0.5);
+            width: 180px;
+            padding: 10px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 50;
+            opacity: 0;
+            transition: all 0.5s ease;
+            text-align: center;
+            pointer-events: none;
+        }
+        .featured-book.active { opacity: 1; transform: translateY(-50%) scale(1); }
+        .featured-left { left: 20px; }
+        .featured-right { right: 20px; }
+        .featured-book img { width: 100%; border-radius: 5px; margin-bottom: 8px; }
+        .featured-book h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--primary-color); }
+        .featured-book p { font-size: 0.65rem; line-height: 1.2; opacity: 0.8; }
+
+        .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; display: none; }
+        .star { position: absolute; background: var(--primary-color); border-radius: 50%; animation: twinkle var(--d) linear infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; transform: scale(1.2); } }
+
+        .page { display: none; min-height: 100vh; padding: 2.5rem 1.25rem; flex-direction: column; align-items: center; position: relative; animation: fadeIn 0.5s ease; }
+        .page.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .header-top-right { position: fixed; top: 1.25rem; right: 1.25rem; text-align: right; z-index: 100; }
+        .header-top-right h3 { font-size: 1.2rem; color: var(--primary-color); }
+        .header-top-right p { font-size: 0.7rem; opacity: 0.8; }
+
+        .back-btn { position: absolute; top: 1.25rem; left: 1.25rem; padding: 0.6rem 1.2rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; z-index: 100; font-weight: bold; }
+        .main-title { margin-top: 15vh; text-align: center; color: var(--primary-color); font-weight: bold; }
+        
+        .nav-buttons { margin-top: auto; margin-bottom: 3rem; display: flex; gap: 1.25rem; }
+        .btn-big { padding: 1.25rem 2.5rem; border: none; border-radius: 10px; background: var(--primary-color); color: white; cursor: pointer; transition: 0.3s; font-weight: bold; text-transform: uppercase; font-size: 1.1rem; }
+        .btn-big:hover { transform: scale(1.1); }
+
+        .content-card { background: var(--card-bg); padding: 2.2rem; border-radius: 20px; max-width: 53rem; width: 100%; box-shadow: 0 15px 35px rgba(0,0,0,0.15); text-align: center; margin: 1.25rem 0; }
+        .img-box { width: 100%; border-radius: 12px; margin: 1.5rem 0; border: 4px solid white; }
+
+        .music-player { position: fixed; top: 1.25rem; left: 9.3rem; z-index: 1000; display: flex; align-items: center; gap: 0.6rem; background: var(--card-bg); padding: 0.5rem 1rem; border-radius: 30px; border: 2px solid var(--primary-color); }
+        .music-icon { font-size: 1.25rem; color: var(--primary-color); cursor: pointer; }
+
+        .project-btn { position: fixed; bottom: 1.8rem; right: 1.8rem; padding: 0.9rem 1.8rem; background: #2c3e50; color: white; border-radius: 50px; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; z-index: 100; border: none; font-size: 1rem; font-weight: bold; }
+        .html-spin { font-size: 1.7rem; color: #e34f26; animation: spin 3s linear infinite; }
+
+        .settings-container { position: fixed; bottom: 1.8rem; left: 1.8rem; z-index: 100; display: flex; align-items: center; gap: 0.75rem; }
+        .settings-icon { width: 3.7rem; height: 3.7rem; background: #95a5a6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; cursor: pointer; }
+        .settings-panel { display: none; position: absolute; bottom: 5rem; left: 0; background: var(--card-bg); padding: 1.5rem; border-radius: 15px; width: 17.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--primary-color); }
+        .color-option { width: 1.8rem; height: 1.8rem; border-radius: 50%; cursor: pointer; display: inline-block; margin: 0.4rem; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <div class="header-top-right">
+        <h3>WED SITE CỦA TÔI</h3>
+        <p>Giới thiệu bản thân, sở thích cá nhân</p>
+    </div>
+
+    <div class="music-player">
+        <i class="fas fa-play music-icon" id="musicBtn" onclick="toggleMusic()"></i>
+        <span id="musicStatus" style="font-size: 0.7rem; font-weight: bold; color: var(--primary-color);">Music Stopped</span>
+        <audio id="bgMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" loop></audio>
+    </div>
+
+    <div id="featLeft" class="featured-book featured-left"></div>
+    <div id="featRight" class="featured-book featured-right"></div>
+
+    <div class="books-container" id="books-bg"></div>
+    <div class="stars-container" id="stars-bg"></div>
+
+    <section id="home" class="page active">
+        <h1 class="main-title">WEB SITE CỦA BẠN THÂN</h1>
+        <div class="nav-buttons">
+            <button class="btn-big" onclick="showPage('intro')">giới thiệu bạn thân em</button>
+            <button class="btn-big" style="padding: 1.5rem 3rem; font-size: 1.5rem;" onclick="showPage('trangchu')">trang chủ</button>
+            <button class="btn-big" onclick="showPage('ve-em')">Về Em</button>
+        </div>
+    </section>
+
+    <section id="intro" class="page">
+        <button class="back-btn" onclick="showPage('home')">← QUAY LẠI</button>
+        <h1 style="font-size: 3.5rem; margin-bottom: 1.25rem;">GIỚI THIỆU VỀ EM</h1>
+        <div class="content-card">
+            <img src="https://tse2.mm.bing.net/th/id/OIP.SfrXXLHU-XHTjFUX-8WjVAHaEL?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" class="img-box">
+            <p style="text-align: justify; line-height: 2;">Em tên là Đặng Phúc Anh, hiện đang là học sinh lớp 9C, Trường Trung học cơ sở Diễn Thành. Em sinh ra và lớn lên trong một gia đình bình thường. Gia đình luôn dạy em phải cố gắng học tập và biết giúp đỡ người khác trong khả năng của mình, dù là những việc nhỏ
+             Trong học tập, em tự nhận thấy bản thân học ở mức khá, không xuất sắc nhưng cũng không quá yếu. Tuy nhiên, em còn một số hạn chế như hơi nhác học, đôi lúc chưa tập trung, nên kết quả học tập có lúc chưa được như mong muốn. Em đang cố gắng thay đổi những thói quen chưa tốt đó để học tập nghiêm túc hơn
+             Về tính cách, em là người khá hòa đồng, dễ nói chuyện với bạn bè nhưng đôi khi còn nóng vội và thiếu kiên nhẫn. Ngoài thời gian học tập, em thường dành thời gian để nghỉ ngơi, giải trí nhằm giảm căng thẳng sau những giờ học
+             Em hiểu rằng bản thân vẫn còn nhiều thiếu sót, nhưng em tin rằng nếu cố gắng từng ngày, em sẽ dần hoàn thiện bản thân và trở thành người có ích cho gia đình và xã hội.</p>
+            <img src="https://tse2.mm.bing.net/th/id/OIP.fHZINWxa9MPfPJCCWcdk8gHaEL?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" class="img-box">
+        </div>
+    </section>
+
+    <section id="trangchu" class="page">
+        <button class="back-btn" onclick="showPage('home')">← QUAY LẠI</button>
+        <h1 style="font-size: 4rem;">TRANG CHỦ</h1>
+        <div class="content-card">
+            <h2 style="color: var(--primary-color);">GMAIL</h2>
+            <p style="background: rgba(0,0,0,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="copyText('tu5223588@gmail.com')">tu5223588@gmail.com</p>
+            <hr style="margin: 2.5rem 0; opacity: 0.2;">
+            <h1 style="font-size: 3rem;">Về Em</h1>
+            <div style="font-size: 1.4rem; text-align: left; line-height: 2.5; display: inline-block;">
+                <p>Tên em là : <b>Đặng Phúc Anh</b></p>
+                <p>Lớp : <b>9C</b></p>
+                <p>Trường : <b>THCS Diễn Thành</b></p>
+            </div>
+            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1350&q=80" class="img-box">
+        </div>
+    </section>
+
+    <section id="ve-em" class="page">
+        <button class="back-btn" onclick="showPage('home')">← QUAY LẠI</button>
+        <h1 style="font-size: 3.5rem;">VỀ EM</h1>
+        <div class="content-card">
+            <p style="text-align: justify; line-height: 2;">Em là học sinh lớp 9, hiện đang học tập và sinh hoạt tại trường. Trong cuộc sống hằng ngày, em là người khá hòa đồng, thích tham gia các hoạt động vui chơi cùng bạn bè sau giờ học. Những lúc rảnh rỗi, em thường đi chơi cùng bạn, trò chuyện, ăn vặt hoặc dạo quanh khu vực gần nhà để thư giãn sau những ngày học tập căng thẳng
+         Ngoài ra, em cũng thích nghe nhạc và xem phim để giải trí. Việc đi chơi cùng bạn bè giúp em cảm thấy thoải mái hơn, giảm bớt áp lực học tập và tạo thêm nhiều kỷ niệm đáng nhớ của tuổi học trò. Những buổi tụ tập đơn giản nhưng vui vẻ đó là khoảng thời gian em cảm thấy gần gũi và gắn bó hơn với bạn bè
+         Em luôn cố gắng cân bằng giữa việc học và vui chơi, để vừa hoàn thành tốt nhiệm vụ học tập, vừa có một tuổi học trò vui vẻ và ý nghĩa.</p>
+         <style>
+    img{
+      width: 400px;
+      border-radius: 20px;
+      border: 5px solid;
+      border-image: linear-gradient(
+        rgb(255, 255, 255)
+      ) 1;
+    }
+  </style>
+</head>
+
+<body>
+  <img src="hinhanhlop.jpg">
+  <body>
+</div>
+
+    </section>
+
+    <section id="project-page" class="page">
+        <button class="back-btn" onclick="showPage('home')">← QUAY LẠI</button>
+        <h1 style="font-size: 3rem;">Dự án / Hoạt động</h1>
+        <div class="content-card">
+            <h2 style="font-size: 2rem; color: #e34f26;">HTMl: </h2>
+            <p style="background: #222; color: #0f0; padding: 1.25rem; border-radius: 10px; cursor: pointer;" onclick="copyText('https://drive.google.com/file/d/16OpK1JXA4TNxlb4LYmkrkV0-RbMgGiD8/view?usp=sharing')">--bamvaodesaochep--https://drive.google.com/file/d/16OpK1JXA4TNxlb4LYmkrkV0-RbMgGiD8/view?usp=sharing</p>
+        </div>
+    </section>
+
+    <button class="project-btn" onclick="showPage('project-page')">
+        <span>Dự án/Hoạt động</span>
+        <i class="fab fa-html5 html-spin"></i>
+    </button>
+
+    <div class="settings-container">
+        <div class="settings-icon" onclick="toggleSettings()"><i class="fas fa-cog"></i></div>
+        <div class="settings-panel" id="settings-panel">
+            <button onclick="document.body.classList.toggle('dark-mode')" style="width:100%; padding:0.6rem;">Sáng / Tối</button>
+            <div id="color-picker" style="margin-top:10px;"></div>
+            <p style="margin-top:10px;">Cỡ chữ:</p>
+            <input type="range" min="12" max="28" value="16" style="width:100%" oninput="document.documentElement.style.fontSize = this.value + 'px'">
+        </div>
+    </div>
+
+    <script>
+        const uniqueBookIDs = Array.from({length: 100}, (_, i) => 8000000 + (i * 1237));
+        const bookData = [
+            {t: "Nhà Giả Kim", d: "Hành trình đi tìm vận mệnh của chàng chăn cừu."},
+            {t: "Hoàng Tử Bé", d: "Câu chuyện về tình yêu và cái nhìn trẻ thơ về thế giới."},
+            {t: "Ông Già Và Biển Cả", d: "Ý chí kiên cường của con người trước thiên nhiên."},
+            {t: " Gatsby Vĩ Đại", d: "Sự sụp đổ của giấc mơ Mỹ và tình yêu vô vọng."},
+            {t: "1984", d: "Một cái nhìn tiên tri về xã hội tương lai bị kiểm soát."},
+            {t: "Don Quixote", d: "Chàng hiệp sĩ mộng mơ chiến đấu với cối xay gió."}
+        ];
+
+        function create100UniqueBooks() {
+            const container = document.getElementById('books-bg');
+            for (let i = 0; i < 100; i++) {
+                const book = document.createElement('div');
+                book.className = 'floating-book';
+                book.style.backgroundImage = `url('https://covers.openlibrary.org/b/id/${uniqueBookIDs[i]}-M.jpg')`;
+                book.style.left = Math.random() * 100 + 'vw';
+                book.style.animationDuration = (Math.random() * 7 + 10) + 's';
+                book.style.animationDelay = (Math.random() * 15) + 's';
+                container.appendChild(book);
+            }
+        }
+
+        
+        setInterval(() => {
+            const side = Math.random() > 0.5 ? 'featLeft' : 'featRight';
+            const featBox = document.getElementById(side);
+            const randomID = uniqueBookIDs[Math.floor(Math.random() * 100)];
+            const info = bookData[Math.floor(Math.random() * bookData.length)];
+            
+            featBox.innerHTML = `
+                <img src="https://covers.openlibrary.org/b/id/${randomID}-M.jpg">
+                <h4>${info.t}</h4>
+                <p>${info.d}</p>
+            `;
+            featBox.classList.add('active');
+            setTimeout(() => featBox.classList.remove('active'), 3000);
+        }, 10000);
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            const books = document.getElementById('books-bg');
+            const stars = document.getElementById('stars-bg');
+            if (id === 'home') { books.style.display = 'block'; stars.style.display = 'none'; } 
+            else { 
+                books.style.display = 'none'; stars.style.display = 'block'; 
+                stars.innerHTML = '';
+                for(let i=0; i<80; i++) {
+                    const s = document.createElement('div');
+                    s.className='star'; s.style.width=s.style.height=Math.random()*4+2+'px';
+                    s.style.left=Math.random()*100+'vw'; s.style.top=Math.random()*100+'vh';
+                    s.style.setProperty('--d', Math.random()*3+2+'s'); stars.appendChild(s);
+                }
+            }
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function toggleMusic() {
+            const a = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            if (a.paused) { a.play(); btn.className = 'fas fa-pause music-icon'; document.getElementById('musicStatus').innerText = "Playing..."; }
+            else { a.pause(); btn.className = 'fas fa-play music-icon'; document.getElementById('musicStatus').innerText = "Stopped"; }
+        }
+
+        function copyText(txt) {
+            navigator.clipboard.writeText(txt);
+            alert("Đã sao chép nội dung!");
+        }
+
+        function toggleSettings() {
+            const p = document.getElementById('settings-panel');
+            p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        }
+
+        const colors = ['#3498db', '#e67e22', '#e74c3c', '#2ecc71', '#9b59b6'];
+        const picker = document.getElementById('color-picker');
+        colors.forEach(c => {
+            const d = document.createElement('div');
+            d.className = 'color-option'; d.style.backgroundColor = c;
+            d.onclick = () => document.documentElement.style.setProperty('--primary-color', c);
+            picker.appendChild(d);
+        });
+
+        create100UniqueBooks();
+    </script>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    
+    <style>
+
+        body {
+            -webkit-user-select: none; 
+            -ms-user-select: none;     
+            user-select: none;         
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+   
+        .box-copy {
+            border: 2px dashed #ccc;
+            padding: 15px;
+            background: #f9f9f9;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:active {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'a')) {
+                e.preventDefault();
+            }
+            if (e.keyCode === 123) { // F12
+                e.preventDefault();
+            }
+        });
+
+
+        function copyToClipboard() {
+
+            var text = document.getElementById("myCode").innerText;
+
+
+            navigator.clipboard.writeText(text).then(function() {
+
+                document.getElementById("status").innerText = "Đã sao chép vào bộ nhớ!";
+                
+                setTimeout(() => {
+                    document.getElementById("status").innerText = "";
+                }, 2000);
+            }).catch(function(err) {
+                alert('Không thể copy: ', err);
+            });
+        }
+    </script>
+
+</body>
+</html>
