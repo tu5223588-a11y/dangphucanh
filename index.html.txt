@@ -147,7 +147,7 @@
         <h1 style="font-size: 4rem;">TRANG CHỦ</h1>
         <div class="content-card">
             <h2 style="color: var(--primary-color);">GMAIL</h2>
-            <p style="background: rgba(0,0,0,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="copyText('tu5223588@gmail.com')">tu5223588@gmail.com</p>
+            <p style="background: rgba(0,0,0,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="copyText('dangphucanh121011@gmail.com')">dangphucanh121011@gmail.com</p>
             <hr style="margin: 2.5rem 0; opacity: 0.2;">
             <h1 style="font-size: 3rem;">Về Em</h1>
             <div style="font-size: 1.4rem; text-align: left; line-height: 2.5; display: inline-block;">
